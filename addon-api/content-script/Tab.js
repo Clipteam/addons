@@ -206,6 +206,7 @@ export default class Tab extends Listenable {
    * @type {?string}
    */
   get editorMode() {
+    /*
     const pathname = location.pathname.toLowerCase();
     const split = pathname.split("/").filter(Boolean);
     if (!split[0] || split[0] !== "projects") return null;
@@ -213,6 +214,9 @@ export default class Tab extends Listenable {
     if (split.includes("fullscreen")) return "fullscreen";
     if (split.includes("embed")) return "embed";
     return "projectpage";
+    */
+    // cc: always editor
+    return 'editor';
   }
 
   /**
@@ -328,7 +332,8 @@ export default class Tab extends Listenable {
   get direction() {
     // https://github.com/LLK/scratch-l10n/blob/master/src/supported-locales.js
     const rtlLocales = ["ar", "ckb", "fa", "he"];
-    const lang = scratchAddons.globalState.auth.scratchLang.split("-")[0];
+    // cc: use editor's state
+    const lang = __scratchAddonsRedux.state.locales.locale;
     return rtlLocales.includes(lang) ? "rtl" : "ltr";
   }
 

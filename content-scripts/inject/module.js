@@ -90,6 +90,8 @@ const page = {
   },
   isFetching: false,
   async refetchSession() {
+    // cc: it's editor only, don't refresh session.
+    /*
     let res;
     let d;
     if (this.isFetching) return;
@@ -110,6 +112,7 @@ const page = {
     scratchAddons.session = d;
     scratchAddons.eventTargets.auth.forEach((auth) => auth._update(d));
     this.isFetching = false;
+    */
   },
 };
 Comlink.expose(page, Comlink.windowEndpoint(comlinkIframe4.contentWindow, comlinkIframe3.contentWindow));
@@ -195,6 +198,10 @@ function onDataReady() {
   scratchAddons.methods.copyImage = async (dataURL) => {
     return _cs_.copyImage(dataURL);
   };
+  // cc: interact with front-end
+  scratchAddons.methods.getSettingsInfo = () => _cs_.getSettingsInfo();
+  scratchAddons.methods.changeEnabledState = (addonId, newState) => _cs_.changeEnabledState(addonId, newState);
+  scratchAddons.methods.changeAddonSettings = (addonId, newSettings) => _cs_.changeAddonSettings(addonId, newSettings);
   scratchAddons.methods.getEnabledAddons = (tag) => _cs_.getEnabledAddons(tag);
 
   scratchAddons.sharedObserver = new SharedObserver();
@@ -221,11 +228,7 @@ function onDataReady() {
 }
 
 function bodyIsEditorClassCheck() {
-  const pathname = location.pathname.toLowerCase();
-  const split = pathname.split("/").filter(Boolean);
-  if (!split[0] || split[0] !== "projects") return;
-  if (split.includes("editor") || split.includes("fullscreen")) document.body.classList.add("sa-body-editor");
-  else document.body.classList.remove("sa-body-editor");
+  document.body.classList.add("sa-body-editor");
 }
 if (!document.body) document.addEventListener("DOMContentLoaded", bodyIsEditorClassCheck);
 else bodyIsEditorClassCheck();

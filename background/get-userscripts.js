@@ -237,7 +237,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     scratchAddons.localEvents.dispatchEvent(new CustomEvent("csInfoCacheUpdated"));
   },
   {
-    urls: ["https://scratch.mit.edu/*"],
+    urls: ["https://codingclip.com/editor/*", "http://localhost:8601/*"],
     types: ["main_frame", "sub_frame"],
   }
 );
@@ -270,7 +270,7 @@ chrome.webRequest.onResponseStarted.addListener(
     }
   },
   {
-    urls: ["https://scratch.mit.edu/*"],
+    urls: ["https://codingclip.com/editor/*", "http://localhost:8601/*"],
     types: ["main_frame"],
   }
 );
@@ -334,7 +334,8 @@ chrome.tabs.query({}, (tabs) =>
 // Pathname patterns. Make sure NOT to set global flag!
 // Don't forget ^ and $
 const WELL_KNOWN_PATTERNS = {
-  projects: /^\/projects\/(?:editor|\d+(?:\/(?:fullscreen|editor))?)\/?$/,
+  // cc: always true
+  projects: /./,
   projectEmbeds: /^\/projects\/\d+\/embed\/?$/,
   studios: /^\/studios\/\d+(?:\/(?:projects|comments|curators|activity))?\/?$/,
   profiles: /^\/users\/[\w-]+\/?$/,
@@ -407,8 +408,9 @@ function userscriptMatches(data, scriptOrStyle, addonId) {
   const parsedOrigin = parsedURL.origin;
   const originPath = parsedOrigin + parsedPathname;
   const matchURL = _scratchDomainImplied ? parsedPathname : originPath;
-  const scratchOrigin = "https://scratch.mit.edu";
-  const isScratchOrigin = parsedOrigin === scratchOrigin;
+  // cc: apply on both codingclip and localhost
+  const scratchOrigins = ["https://codingclip.com", "http://localhost:8601"];
+  const isScratchOrigin = scratchOrigin.includes(parsedOrigin);
   // "*" is used for any URL on Scratch origin
   if (matches === "*") return isScratchOrigin;
   // matches becomes RegExp if it is a string that starts with ^

@@ -107,6 +107,38 @@ const cs = {
       );
     });
   },
+  // cc: interact with front-end
+  getSettingsInfo() {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage("getSettingsInfo", (res) => resolve(res));
+    });
+  },
+  changeEnabledState(addonId, newState) {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        {
+          changeEnabledState: {
+            addonId,
+            newState,
+          },
+        },
+        (res) => resolve(res)
+      );
+    });
+  },
+  changeAddonSettings(addonId, newSettings) {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        {
+          changeAddonSettings: {
+            addonId,
+            newSettings,
+          },
+        },
+        (res) => resolve(res)
+      );
+    });
+  },
   getEnabledAddons(tag) {
     // Return addons that are enabled
     return new Promise((resolve) => {
