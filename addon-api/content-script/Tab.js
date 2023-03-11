@@ -216,7 +216,7 @@ export default class Tab extends Listenable {
     return "projectpage";
     */
     // cc: always editor
-    return 'editor';
+    return "editor";
   }
 
   /**
