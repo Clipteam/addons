@@ -409,7 +409,7 @@ function userscriptMatches(data, scriptOrStyle, addonId) {
   const originPath = parsedOrigin + parsedPathname;
   const matchURL = _scratchDomainImplied ? parsedPathname : originPath;
   // cc: apply on both codingclip and localhost
-  const scratchOrigins = ["https://codingclip.com", "http://localhost:8601"];
+  const scratchOrigin = ["https://codingclip.com", "http://localhost:8601"];
   const isScratchOrigin = scratchOrigin.includes(parsedOrigin);
   // "*" is used for any URL on Scratch origin
   if (matches === "*") return isScratchOrigin;
