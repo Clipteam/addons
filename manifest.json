@@ -42,6 +42,7 @@
     "webRequestBlocking",
     "declarativeNetRequestWithHostAccess",
     "storage",
+    "alarms",
     "contextMenus"
   ],
   "optional_permissions": ["clipboardWrite"],
