@@ -288,6 +288,18 @@ export default class Tab extends Listenable {
    * @returns {string} Hashed class names.
    */
   scratchClass(...args) {
+    const isProject =
+      location.pathname.split("/")[1] === "projects" &&
+      !["embed", "remixes", "studios"].includes(location.pathname.split("/")[3]);
+    const isScratchGui = location.origin === "https://scratchfoundation.github.io" || location.port === "8601";
+    if (!isProject && !isScratchGui) {
+      scratchAddons.console.warn("addon.tab.scratchClass() was used outside a project page");
+      return "";
+    }
+
+    if (!this._calledScratchClassReady)
+      throw new Error("Wait until addon.tab.scratchClassReady() resolves before using addon.tab.scratchClass");
+
     let res = "";
     args
       .filter((arg) => typeof arg === "string")
@@ -299,7 +311,7 @@ export default class Tab extends Listenable {
                 className.startsWith(classNameToFind + "_") && className.length === classNameToFind.length + 6
             ) || "";
         } else {
-          res += `scratchAddonsScratchClass/${classNameToFind}`;
+          throw new Error("addon.tab.scratchClass call failed. Class names are not ready yet");
         }
         res += " ";
       });
@@ -312,6 +324,21 @@ export default class Tab extends Listenable {
     // Sanitize just in case
     res = res.replace(/"/g, "");
     return res;
+  }
+
+  scratchClassReady() {
+    // Make sure to return a resolved promise if this is not a project!
+    const isProject =
+      location.pathname.split("/")[1] === "projects" &&
+      !["embed", "remixes", "studios"].includes(location.pathname.split("/")[3]);
+    const isScratchGui = location.origin === "https://scratchfoundation.github.io" || location.port === "8601";
+    if (!isProject && !isScratchGui) return Promise.resolve();
+
+    this._calledScratchClassReady = true;
+    if (scratchAddons.classNames.loaded) return Promise.resolve();
+    return new Promise((resolve) => {
+      window.addEventListener("scratchAddonsClassNamesReady", resolve, { once: true });
+    });
   }
 
   /**
@@ -828,10 +855,5 @@ export default class Tab extends Listenable {
    */
   prompt(title, message, defaultValue, opts) {
     return modal.prompt(this, title, message, defaultValue, opts);
-  }
-  isScratchAprilFools23() {
-    if (!this.redux.state) return true; // better safe than sorry
-    if (typeof this.redux.state?.scratchGui?.timeTravel === "object") return true;
-    return false;
   }
 }
